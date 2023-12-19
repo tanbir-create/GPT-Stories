@@ -6,7 +6,8 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: [true, "Please enter your name"],
-      maxlength: [25, "Username can't exceed 25 characters"]
+      maxlength: [25, "Username can't exceed 25 characters"],
+      trim: true
     },
 
     email: {
@@ -14,6 +15,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
+      trim: true,
       validate: [validator.isEmail, "Please enter a valid email Id"]
     },
 
@@ -26,7 +28,10 @@ const userSchema = new mongoose.Schema(
 
     links: [
       {
-        url: String,
+        url: {
+          type: String,
+          trim: true
+        },
         type: {
           type: String,
           enum: ["Social", "General"]
@@ -36,14 +41,15 @@ const userSchema = new mongoose.Schema(
 
     profileImageUrl: String,
 
-    specialization: [String],
+    specialization: [{ type: String, trim: true }],
 
     description: {
       type: String,
       minlength: [
         10,
         "Please provide a meaningful description above 10 characters"
-      ]
+      ],
+      trim: true
     },
 
     refreshToken: {

@@ -16,10 +16,12 @@ export default async function authMiddleware(req, res, next) {
   }
 
   if (!token) {
-    throw new AppError(
-      "You are not logged in! Please log in to get access",
-      401,
-      "auth_token_error"
+    return next(
+      new AppError(
+        "You are not logged in! Please log in to get access",
+        401,
+        "auth_token_error"
+      )
     );
   }
 

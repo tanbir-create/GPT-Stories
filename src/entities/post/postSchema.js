@@ -11,6 +11,7 @@ const customMessages = {
 
 const schema = Joi.object({
   user: Joi.string()
+    .trim()
     .required()
     .custom((value, helpers) => {
       if (!ObjectId.isValid(value)) {
@@ -21,11 +22,11 @@ const schema = Joi.object({
     .description("MongoDB object id validation")
     .messages(customMessages),
 
-  title: Joi.string().required().messages(customMessages),
+  title: Joi.string().trim().required().messages(customMessages),
 
-  url: Joi.string().uri().required().messages(customMessages),
+  url: Joi.string().uri().trim().required().messages(customMessages),
 
-  category: Joi.string().required().messages(customMessages),
+  category: Joi.string().trim().required().messages(customMessages),
 
   description: Joi.string().optional(),
 

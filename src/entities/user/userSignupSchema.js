@@ -15,20 +15,25 @@ const customMessages = {
 
 const schema = Joi.object({
   username: Joi.string()
+    .trim()
     .alphanum()
     .min(3)
     .max(25)
     .required()
     .messages(customMessages),
 
-  email: Joi.string().email().required().messages(customMessages),
+  email: Joi.string().trim().email().required().messages(customMessages),
 
-  password: Joi.string().min(6).required().messages(customMessages),
+  password: Joi.string().trim().min(6).required().messages(customMessages),
 
-  confirmPassword: Joi.string().valid(Joi.ref("password")).required().messages({
-    "any.only": "Passwords must match",
-    "string.empty": "Please confirm password"
-  })
+  confirmPassword: Joi.string()
+    .trim()
+    .valid(Joi.ref("password"))
+    .required()
+    .messages({
+      "any.only": "Passwords must match",
+      "string.empty": "Please confirm password"
+    })
 }).with("password", "confirmPassword");
 
 export default schema;

@@ -11,20 +11,26 @@ const postSchema = new mongoose.Schema(
 
     title: {
       type: String,
-      required: [true, "Title of the post is required"]
+      required: [true, "Title of the post is required"],
+      trim: true
     },
 
-    description: String,
+    description: {
+      type: String,
+      trim: true
+    },
 
     url: {
       type: String,
       required: [true, "Please enter the URL of your AI story"],
-      validate: [validator.isURL, "Please enter a valid URL"]
+      validate: [validator.isURL, "Please enter a valid URL"],
+      trim: true
     },
 
     category: {
       type: String,
-      required: [true, "Select a category so users can find your post"]
+      required: [true, "Select a category so users can find your post"],
+      trim: true
     },
 
     images: [
