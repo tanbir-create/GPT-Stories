@@ -5,6 +5,10 @@ export default function userDbRepositoryMongoDB() {
     return User.findOne(params).select(selectFields);
   };
 
+  const findById = (id, selectFields = "") => {
+    return User.findById(id).select(selectFields);
+  };
+
   const add = (userEntity) => {
     const newUser = new User({
       username: userEntity.getUsername(),
@@ -13,14 +17,31 @@ export default function userDbRepositoryMongoDB() {
       links: userEntity.getLinks(),
       specialization: userEntity.getProfileImageUrl(),
       description: userEntity.getDescription(),
-      profileImageUrl: userEntity.getProfileImageUrl()
+      profileImageUrl: userEntity.getProfileImageUrl(),
+      refreshToken: userEntity.getRefreshToken()
     });
 
     return newUser.save();
   };
 
+  const updateById = (id, userEntity) => {
+    const updatedUser = {
+      // TODO:
+      // Add all the props that are updateable
+      refreshToken: userEntity.getRefreshToken()
+    };
+
+    return User.findOneAndUpdate(
+      { _id: id },
+      { $set: updatedUser },
+      { new: true }
+    );
+  };
+
   return {
     add,
-    findOne
+    findOne,
+    findById,
+    updateById
   };
 }

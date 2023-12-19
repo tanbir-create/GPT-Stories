@@ -1,33 +1,68 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+const { promisify } = require("util");
+
 import config from "../../config/config";
 
 export default function authService() {
-  const encryptPassword = async (password) => {
+  const encrypt = async (payload) => {
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPayload = await bcrypt.hash(payload, salt);
 
-    return hashedPassword;
+    return hashedPayload;
   };
 
-  const compare = async (password, hashedPassword) => {
-    const passwordsMatch = await bcrypt.compare(password, hashedPassword);
+  const compare = async (payload, hashedPayload) => {
+    const payloadsMatch = await bcrypt.compare(payload, hashedPayload);
 
-    return passwordsMatch;
+    return payloadsMatch;
   };
 
-  const verify = (token) => jwt.verify(token, config.jwtSecret);
+  const verify = async (token, type) => {
+    const secret =
+      type === "access" ? config.jwtAccessSecret : config.jwtRefreshSecret;
 
-  const generateToken = (payload) => {
-    return jwt.sign(payload, config.jwtSecret, {
-      expiresIn: "1d"
+    return await promisify(jwt.verify)(token, secret);
+  };
+
+  const generateToken = (payload, type) => {
+    const secret =
+      type === "access" ? config.jwtAccessSecret : config.jwtRefreshSecret;
+
+    const expiresIn =
+      type === "access"
+        ? config.jwtAccessTokenExpiresIn
+        : config.jwtRefreshTokenExpiresIn;
+
+    return jwt.sign(payload, secret, {
+      expiresIn
     });
   };
 
+  const generateAccessAndRefreshTokens = async ({
+    id,
+    payload,
+    userRepository,
+    user
+  }) => {
+    const accessToken = generateToken(payload, "access");
+    const refreshToken = generateToken(payload, "refresh");
+
+    const encryptedRefreshToken = await encrypt(refreshToken);
+    const updatedUser = user({ refreshToken: encryptedRefreshToken });
+    await userRepository.updateById(id, updatedUser);
+
+    return {
+      accessToken,
+      refreshToken
+    };
+  };
+
   return {
-    encryptPassword,
+    encrypt,
     compare,
     verify,
-    generateToken
+    generateToken,
+    generateAccessAndRefreshTokens
   };
 }

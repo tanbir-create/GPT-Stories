@@ -10,7 +10,8 @@ export default function postController(
   const validationService = validationServiceInterface(validationServiceImpl());
 
   const addNewPost = (req, res, next) => {
-    const { user, title, description, url, images, category } = req.body;
+    const { title, description, url, images, category } = req.body;
+    const user = req.user.id;
 
     addPost(
       { user, title, description, url, images, category },

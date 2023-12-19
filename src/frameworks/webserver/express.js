@@ -1,7 +1,10 @@
 import morgan from "morgan";
 import compression from "compression";
 import helmet from "helmet";
-import logger from "../../logger";
+import cookieParser from "cookie-parser";
+import mongoSanitize from "express-mongo-sanitize";
+import xss from "xss-clean";
+import logger from "@utils/logger";
 
 export default function expressConfig(app, express) {
   app.use(helmet());
@@ -10,6 +13,10 @@ export default function expressConfig(app, express) {
   app.use(express.json({ limit: "50mb" }));
 
   app.use(express.urlencoded({ extended: true }));
+
+  app.use(cookieParser());
+  app.use(mongoSanitize());
+  app.use(xss());
 
   app.use((req, res, next) => {
     res.setHeader(

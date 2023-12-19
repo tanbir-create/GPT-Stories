@@ -1,4 +1,4 @@
-import logger from "../../../logger";
+import logger from "@utils/logger";
 import { AppError } from "@utils/error";
 
 const handleCastErrorDB = (err) => {
@@ -31,7 +31,7 @@ const handleValidationErrorDB = (err) => {
 
 const handleJWTError = () => {
   return new AppError(
-    "Invalid login attempt. Please login again",
+    "You are logged out! Please login again",
     401,
     "auth_token_error"
   );

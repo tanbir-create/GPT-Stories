@@ -7,5 +7,8 @@ export default {
   redis: {
     uri: process.env.REDIS_URL || "redis://localhost:6379"
   },
-  jwtSecret: process.env.JWT_SECRET || "jkl!±@£!@ghj1237"
+  jwtAccessSecret: process.env.JWT_ACCESS_SECRET || "jkl!±@£!@ghj1237",
+  jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || "jkl!±@£!@ghj1454537",
+  jwtAccessTokenExpiresIn: "1h",
+  jwtRefreshTokenExpiresIn: "2d"
 };

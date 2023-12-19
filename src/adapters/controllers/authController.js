@@ -1,9 +1,10 @@
 import signup from "@application/use_cases/auth/signup";
 import login from "@application/use_cases/auth/login";
-import logger from "../../logger";
+import logout from "@application/use_cases/auth/logout";
+import generataRefreshToken from "@application/use_cases/auth/refreshToken";
 
 const cookieOptions = {
-  maxAge: 24 * 60 * 60 * 1000, // 1day
+  maxAge: 2 * 24 * 60 * 60 * 1000, // 2days
   httpOnly: true,
   secure: process.env.NODE_ENV === "production"
 };
@@ -30,28 +31,59 @@ export default function authController(
       validationService
     )
       .then((data) => {
-        res.cookie("jwt", data.token, cookieOptions);
+        res.cookie("accessToken", data.accessToken, cookieOptions);
+        res.cookie("refreshToken", data.refreshToken, cookieOptions);
         res.status(201).json({
           status: "success",
           message: "Signup successful",
           data
         });
       })
-      .catch((err) => {
-        next(err);
-      });
+      .catch(next);
   };
 
   const loginUser = (req, res, next) => {
     const { email, password } = req.body;
 
     login({ email, password }, dbRepository, authService)
-      .then((token) => {
-        res.cookie("jwt", token, cookieOptions);
+      .then((data) => {
+        res.cookie("accessToken", data.accessToken, cookieOptions);
+        res.cookie("refreshToken", data.refreshToken, cookieOptions);
         res.status(200).json({
           status: "success",
           message: "Login succuessful",
-          token
+          data
+        });
+      })
+      .catch(next);
+  };
+
+  const logoutUser = (req, res, next) => {
+    const authUser = req.user;
+
+    logout({ authUser }, dbRepository)
+      .then(() => {
+        res.clearCookie("accessToken", cookieOptions);
+        res.clearCookie("refreshToken", cookieOptions);
+        res.status(200).json({
+          status: "success",
+          message: "Logged out"
+        });
+      })
+      .catch(next);
+  };
+
+  const refreshAccessToken = (req, res, next) => {
+    const token = req.cookies.refreshToken;
+
+    generataRefreshToken({ token }, dbRepository, authService)
+      .then((data) => {
+        res.cookie("accessToken", data.accessToken, cookieOptions);
+        res.cookie("refreshToken", data.refreshToken, cookieOptions);
+        res.status(200).json({
+          status: "success",
+          message: "Access Token refreshed",
+          data
         });
       })
       .catch(next);
@@ -59,6 +91,8 @@ export default function authController(
 
   return {
     signupUser,
-    loginUser
+    loginUser,
+    logoutUser,
+    refreshAccessToken
   };
 }

@@ -8,7 +8,6 @@ import expressConfig from "@frameworks/webserver/express";
 import mongoDbConnection from "@frameworks/database/connection";
 import configureRoutes from "@frameworks/webserver/routes";
 import errorHandlingMiddleware from "@frameworks/webserver/middlewares/errorHandlingMiddleware";
-import logger from "./logger";
 
 process.on("uncaughtException", (err) => {
   console.log(err);

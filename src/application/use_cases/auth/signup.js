@@ -18,7 +18,7 @@ export default async function signup(
     });
   }
 
-  const encryptedPassword = await authService.encryptPassword(value.password);
+  const encryptedPassword = await authService.encrypt(value.password);
 
   let newUser = user({ ...value, password: encryptedPassword });
 
@@ -31,10 +31,17 @@ export default async function signup(
       id: newUser._id
     }
   };
-  const token = authService.generateToken(payload);
+  const { accessToken, refreshToken } =
+    await authService.generateAccessAndRefreshTokens({
+      id: newUser._id,
+      payload,
+      userRepository,
+      user
+    });
 
   return {
     user: newUser,
-    token
+    accessToken,
+    refreshToken
   };
 }

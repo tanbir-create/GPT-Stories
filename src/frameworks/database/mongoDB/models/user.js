@@ -44,6 +44,11 @@ const userSchema = new mongoose.Schema(
         10,
         "Please provide a meaningful description above 10 characters"
       ]
+    },
+
+    refreshToken: {
+      type: String,
+      select: false
     }
   },
 

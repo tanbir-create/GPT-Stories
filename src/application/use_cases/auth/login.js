@@ -1,3 +1,4 @@
+import { user } from "@entities/user";
 import { AppError } from "@utils/error";
 
 export default async function login(
@@ -13,20 +14,35 @@ export default async function login(
     );
   }
 
-  const user = await userRepository.findOne({ email }, "password");
-  if (!user) {
+  const existingUser = await userRepository.findOne({ email }, "password");
+  if (!existingUser) {
     throw new AppError("Invalid email or password", 401, "invalid_data_error");
   }
 
-  const passwordsMatch = await authService.compare(password, user.password);
+  const passwordsMatch = await authService.compare(
+    password,
+    existingUser.password
+  );
   if (!passwordsMatch) {
     throw new AppError("Invalid email or password", 401, "invalid_data_error");
   }
 
   const payload = {
     user: {
-      id: user._id
+      id: existingUser._id
     }
   };
-  return authService.generateToken(payload);
+
+  const { accessToken, refreshToken } =
+    await authService.generateAccessAndRefreshTokens({
+      id: existingUser._id,
+      payload,
+      userRepository,
+      user
+    });
+
+  return {
+    accessToken,
+    refreshToken
+  };
 }

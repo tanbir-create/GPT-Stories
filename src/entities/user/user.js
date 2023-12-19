@@ -6,7 +6,8 @@ export default function user({
   links,
   profileImageUrl,
   specialization,
-  description
+  description,
+  refreshToken
 }) {
   return {
     getUsername: () => username,
@@ -15,7 +16,8 @@ export default function user({
     getLinks: () => links,
     getProfileImageUrl: () => profileImageUrl,
     getSpecialization: () => specialization,
-    getDescription: () => description
+    getDescription: () => description,
+    getRefreshToken: () => refreshToken
     // getCreatedAt: () => createdAt
   };
 }
