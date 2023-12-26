@@ -17,7 +17,7 @@ export default async function generataRefreshToken(
     throw new AppError("Invalid login attempt", 401, "auth_token_error");
   }
 
-  const refreshTokensMatch = await authService.compare(
+  const refreshTokensMatch = await authService.compareToken(
     token,
     existingUser.refreshToken
   );

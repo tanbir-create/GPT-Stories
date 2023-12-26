@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import crypto from "node:crypto";
 const { promisify } = require("util");
 
 import config from "../../config/config";
@@ -10,6 +11,16 @@ export default function authService() {
     const hashedPayload = await bcrypt.hash(payload, salt);
 
     return hashedPayload;
+  };
+
+  const encryptToken = (token) => {
+    const hash = crypto.createHash("sha256");
+    hash.update(token);
+    return hash.digest("hex");
+  };
+
+  const compareToken = async (token, encryptedToken) => {
+    return encryptToken(token) === encryptedToken;
   };
 
   const compare = async (payload, hashedPayload) => {
@@ -48,8 +59,9 @@ export default function authService() {
     const accessToken = generateToken(payload, "access");
     const refreshToken = generateToken(payload, "refresh");
 
-    const encryptedRefreshToken = await encrypt(refreshToken);
+    const encryptedRefreshToken = await encryptToken(refreshToken);
     const updatedUser = user({ refreshToken: encryptedRefreshToken });
+
     await userRepository.updateById(id, updatedUser);
 
     return {
@@ -61,6 +73,8 @@ export default function authService() {
   return {
     encrypt,
     compare,
+    encryptToken,
+    compareToken,
     verify,
     generateToken,
     generateAccessAndRefreshTokens

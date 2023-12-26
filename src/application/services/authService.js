@@ -4,6 +4,9 @@ export default function authService(service) {
   const compare = (payload, hashedPayload) =>
     service.compare(payload, hashedPayload);
 
+  const compareToken = (token, encryptedToken) =>
+    service.compareToken(token, encryptedToken);
+
   const verify = (token, type) => service.verify(token, type);
 
   const generateToken = (payload, type) => service.generateToken(payload, type);
@@ -14,6 +17,7 @@ export default function authService(service) {
   return {
     encrypt,
     compare,
+    compareToken,
     verify,
     generateToken,
     generateAccessAndRefreshTokens
