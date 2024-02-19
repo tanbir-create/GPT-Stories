@@ -50,19 +50,14 @@ const userSchema = new mongoose.Schema(
         "Please provide a meaningful description above 10 characters"
       ],
       trim: true
-    },
-
-    refreshToken: {
-      type: String,
-      select: false
     }
   },
 
   { timestamps: true }
 );
 
-const UserModel = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
 
-UserModel.ensureIndexes();
+User.ensureIndexes();
 
-export default UserModel;
+export default User;

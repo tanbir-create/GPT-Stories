@@ -15,10 +15,9 @@ export default function userDbRepositoryMongoDB() {
       email: userEntity.getEmail(),
       password: userEntity.getPassword(),
       links: userEntity.getLinks(),
-      specialization: userEntity.getProfileImageUrl(),
+      specialization: userEntity.getSpecialization(),
       description: userEntity.getDescription(),
-      profileImageUrl: userEntity.getProfileImageUrl(),
-      refreshToken: userEntity.getRefreshToken()
+      profileImageUrl: userEntity.getProfileImageUrl()
     });
 
     return newUser.save();
@@ -28,7 +27,7 @@ export default function userDbRepositoryMongoDB() {
     const updatedUser = {
       // TODO:
       // Add all the props that are updateable
-      refreshToken: userEntity.getRefreshToken()
+      username: userEntity.getUsername()
     };
 
     return User.findOneAndUpdate(

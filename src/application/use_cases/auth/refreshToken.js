@@ -8,26 +8,10 @@ export default async function generataRefreshToken(
 ) {
   const decodedToken = await authService.verify(token, "refresh");
 
-  const existingUser = await userRepository.findById(
-    decodedToken.user.id,
-    "refreshToken"
-  );
+  const existingUser = await userRepository.findById(decodedToken.user.id);
 
   if (!existingUser) {
     throw new AppError("Invalid login attempt", 401, "auth_token_error");
-  }
-
-  const refreshTokensMatch = await authService.compareToken(
-    token,
-    existingUser.refreshToken
-  );
-
-  if (!refreshTokensMatch) {
-    throw new AppError(
-      "Invalid login attempt. Please login again",
-      401,
-      "auth_token_error"
-    );
   }
 
   const payload = {
@@ -37,12 +21,7 @@ export default async function generataRefreshToken(
   };
 
   const { accessToken, refreshToken } =
-    await authService.generateAccessAndRefreshTokens({
-      id: decodedToken.user.id,
-      payload,
-      userRepository,
-      user
-    });
+    await authService.generateAccessAndRefreshTokens(payload);
 
   return {
     accessToken,

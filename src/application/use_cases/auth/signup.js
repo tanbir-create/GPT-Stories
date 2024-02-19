@@ -8,7 +8,7 @@ export default async function signup(
   authService,
   validationService
 ) {
-  const value = validationService.validate(userObj, signupSchema);
+  const validatedUser = validationService.validate(userObj, signupSchema);
 
   const existingUser = await userRepository.findOne({ email: userObj.email });
 
@@ -18,9 +18,9 @@ export default async function signup(
     });
   }
 
-  const encryptedPassword = await authService.encrypt(value.password);
+  const encryptedPassword = await authService.encrypt(validatedUser.password);
 
-  let newUser = user({ ...value, password: encryptedPassword });
+  let newUser = user({ ...validatedUser, password: encryptedPassword });
 
   newUser = await userRepository.add(newUser);
 
@@ -31,13 +31,9 @@ export default async function signup(
       id: newUser._id
     }
   };
+
   const { accessToken, refreshToken } =
-    await authService.generateAccessAndRefreshTokens({
-      id: newUser._id,
-      payload,
-      userRepository,
-      user
-    });
+    await authService.generateAccessAndRefreshTokens(payload);
 
   return {
     user: newUser,

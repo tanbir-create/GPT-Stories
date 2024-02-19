@@ -34,12 +34,7 @@ export default async function login(
   };
 
   const { accessToken, refreshToken } =
-    await authService.generateAccessAndRefreshTokens({
-      id: existingUser._id,
-      payload,
-      userRepository,
-      user
-    });
+    await authService.generateAccessAndRefreshTokens(payload);
 
   return {
     accessToken,

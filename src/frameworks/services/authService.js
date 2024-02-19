@@ -13,6 +13,12 @@ export default function authService() {
     return hashedPayload;
   };
 
+  const compare = async (payload, hashedPayload) => {
+    const payloadsMatch = await bcrypt.compare(payload, hashedPayload);
+
+    return payloadsMatch;
+  };
+
   const encryptToken = (token) => {
     const hash = crypto.createHash("sha256");
     hash.update(token);
@@ -21,12 +27,6 @@ export default function authService() {
 
   const compareToken = async (token, encryptedToken) => {
     return encryptToken(token) === encryptedToken;
-  };
-
-  const compare = async (payload, hashedPayload) => {
-    const payloadsMatch = await bcrypt.compare(payload, hashedPayload);
-
-    return payloadsMatch;
   };
 
   const verify = async (token, type) => {
@@ -50,19 +50,9 @@ export default function authService() {
     });
   };
 
-  const generateAccessAndRefreshTokens = async ({
-    id,
-    payload,
-    userRepository,
-    user
-  }) => {
+  const generateAccessAndRefreshTokens = async (payload) => {
     const accessToken = generateToken(payload, "access");
     const refreshToken = generateToken(payload, "refresh");
-
-    const encryptedRefreshToken = await encryptToken(refreshToken);
-    const updatedUser = user({ refreshToken: encryptedRefreshToken });
-
-    await userRepository.updateById(id, updatedUser);
 
     return {
       accessToken,

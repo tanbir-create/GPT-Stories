@@ -74,7 +74,7 @@ export default function authController(
   };
 
   const refreshAccessToken = (req, res, next) => {
-    const token = req.cookies.refreshToken;
+    const token = req.cookies?.refreshToken;
 
     generataRefreshToken({ token }, dbRepository, authService)
       .then((data) => {
