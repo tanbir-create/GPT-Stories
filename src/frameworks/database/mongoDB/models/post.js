@@ -21,11 +21,36 @@ const postSchema = new mongoose.Schema(
     },
 
     url: {
-      type: String,
-      required: [true, "Please enter the URL of your AI story"],
-      validate: [validator.isURL, "Please enter a valid URL"],
-      trim: true
+      longUrl: {
+        type: String,
+        required: [true, "Please enter the URL of your AI story"],
+        validate: [validator.isURL, "Please enter a valid URL"],
+        trim: true
+      },
+
+      shortId: {
+        type: String,
+        required: true,
+        trim: true,
+        unique: true,
+        index: true
+      },
+
+      views: {
+        type: Number,
+        default: 0
+      },
+
+      hostname: String,
+
+      //second level domain
+      sld: {
+        type: String,
+        required: true
+      }
     },
+
+    tags: [String],
 
     category: {
       type: String,
@@ -57,6 +82,8 @@ const postSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const PostModel = mongoose.model("Post", postSchema);
+const Post = mongoose.model("Post", postSchema);
 
-export default PostModel;
+Post.ensureIndexes();
+
+export default Post;

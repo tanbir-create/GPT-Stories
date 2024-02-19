@@ -4,19 +4,24 @@ export default function postController(
   postDbRepository,
   postDbRepositoryImpl,
   validationServiceInterface,
-  validationServiceImpl
+  validationServiceImpl,
+  postServiceInterface,
+  postServiceImpl
 ) {
   const dbRepository = postDbRepository(postDbRepositoryImpl());
   const validationService = validationServiceInterface(validationServiceImpl());
+  const postService = postServiceInterface(postServiceImpl());
 
   const addNewPost = (req, res, next) => {
     const { title, description, url, images, category } = req.body;
-    const user = req.user.id;
+
+    const user = req.user?.id;
 
     addPost(
       { user, title, description, url, images, category },
       dbRepository,
-      validationService
+      validationService,
+      postService
     )
       .then((data) => {
         res.status(201).json({

@@ -28,7 +28,7 @@ const schema = Joi.object({
 
   category: Joi.string().trim().required().messages(customMessages),
 
-  description: Joi.string().optional(),
+  description: Joi.string().trim().optional(),
 
   images: Joi.optional()
 });
